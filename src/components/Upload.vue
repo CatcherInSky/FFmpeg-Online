@@ -28,8 +28,43 @@ export default {
       default: 10,
     },
   },
+  data() {
+    return {
+    }
+  },
+  computed: {
+    video_list() {
+      return this.$store.state.video_list;
+    }
+  },
   methods: {
-    upload() {},
+    upload(file) {
+      const {name, raw, status} = file;
+      const reader = new FileReader();
+      reader.onload = ({target: {result}}) => {
+        this.$store.dispatch('addVideo', {
+          uid: raw.uid,
+          lastModified: raw.lastModified,
+          origin: {
+            name,
+            type: raw.type,
+            size: raw.size,
+            source: [],
+          },
+          transform: {
+            name: '',
+            type: '',
+            size: 0,
+            source: [],
+          },
+          name,
+          type: raw.type,
+          size: raw.size,
+          Unit8Array: new Uint8Array(result, 0, result.byteLength)
+        })
+      };
+      status === 'ready' && reader.readAsArrayBuffer(raw)
+    },
     exceed() {},
   },
 }

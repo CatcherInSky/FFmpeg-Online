@@ -1,19 +1,20 @@
 <template>
   <div>
-    <el-tabs v-model="selectedItem" type="card" editable @edit="edit">
+    <el-tabs v-model="selected_tab" type="card" >
+      <el-tab-pane label="新增视频" name="add" :closable="false"/>
       <el-tab-pane
-        v-for="item in list"
-        :key="item.value"
-        :label="item.label"
-        :name="item.value"
+        closable
+        v-for="(item, index) in video_list"
+        :key="index"
+        :label="item.name"
+        :name="index.toString()"
       />
-
     </el-tabs>
-    <div v-if="selectedItem == 'add'">
+    <div v-if="selected_tab == 'add'">
       <Upload />
     </div>
     <div v-else>
-      <Video />
+      <Video :video="video_list[selected_tab]"/>
     </div>
   </div>
 </template>
@@ -27,25 +28,18 @@ export default {
     Video,
     Upload,
   },
+  computed: {
+    video_list() {
+      return this.$store.state.video_list;
+    },
+
+  },
   data() {
     return {
-      selectedItem: 'add',
-      list: [
-        {
-          label: '新增视频',
-          value: 'add',
-        }
-      ],
+      selected_tab: 'add',
     }
   },
   methods: {
-    edit(targetName, action) {
-      if(action === 'add') {
-
-      } else if(action === 'remove') {
-        
-      }
-    },
   }
 }
 </script>
