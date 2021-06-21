@@ -1,7 +1,7 @@
 <template>
   <div class="title">
     <img style="width: 50px" src="../assets/logo.cb80e6cf.svg"/>
-    <span class="text">FFMpeg-WebASsmBly</span>
+    <span class="text">FFMpeg-WebASsMbly</span>
   </div>
 </template>
 <script>

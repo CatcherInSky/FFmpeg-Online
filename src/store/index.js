@@ -27,6 +27,9 @@ export default new Vuex.Store({
     setDescrption({detail}, desc) {
       detail.descrption_list = desc;
     },
+    setSetting(state, setting) {
+      state.setting = setting;
+    }
   },
   actions: {
     addVideo({commit, state}, video) {

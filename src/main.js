@@ -13,7 +13,6 @@ import '@ffmpeg/ffmpeg/dist/ffmpeg.min.js'
 
 
 
-
 Video.addLanguage('zh-CN', video_zhCN);
 Video.addLanguage('en', video_en);
 Vue.prototype.$video = Video

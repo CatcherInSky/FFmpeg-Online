@@ -1,9 +1,7 @@
 <template>
-  <div>
     <video ref="video" class="video-js vjs-default-skin vjs-big-play-centered">
       <source />
     </video>
-  </div>
 </template>
 <script>
 

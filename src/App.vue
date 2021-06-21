@@ -5,7 +5,7 @@
         <Title />
       </el-header>
       <el-container>
-        <el-main>
+        <el-main style="padding: 0 20px">
           <Content />
         </el-main>
         <el-aside width="20vw" style="height: 65vh">
@@ -13,7 +13,7 @@
         </el-aside>
       </el-container>
       <el-footer height="30vh">
-        <Detail />
+        <Output />
       </el-footer>
     </el-container>
   </div>
@@ -21,7 +21,7 @@
 
 <script>
 import Content from './components/Content.vue'
-import Detail from './components/Detail.vue'
+import Output from './components/Output.vue'
 import Setting from './components/Setting.vue'
 import Title from './components/Title.vue'
 
@@ -31,7 +31,7 @@ export default {
     Setting,
     Content,
     Title,
-    Detail,
+    Output,
 
   }
 }
