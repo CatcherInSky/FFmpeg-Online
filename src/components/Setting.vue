@@ -32,22 +32,48 @@
     <span style="flex: 1" />
     <div style="display: flex; justify-content: flex-end">
       <el-button size="mini" @click="cancel">重置</el-button>
-      <el-button size="mini" type="primary" @click="confirm">转换</el-button>
+      <el-button size="mini" type="primary"
+        :disabled="disabled"
+        @click="confirm(video)"
+      >转换</el-button>
+      <el-button
+        v-if="video_list.length > 1"
+        size="mini" type="primary"
+        @click="confirm_batch"
+      >批量转换</el-button>
+      <el-button size="mini" type="primary"
+        @click="export_video(video)"
+      >导出</el-button>
     </div>
   </div>
 </template>
 <script>
 
-// import { createFFmpeg } from '@ffmpeg/ffmpeg/dist/ffmpeg.min.js'
-import { createFFmpeg } from "@ffmpeg/ffmpeg";
 import { getParams } from '../utils/other.js';
-import { getVideoInfo, transformVideo } from '../utils/ffmpeg.js';
+import { transformVideo } from '../utils/ffmpeg.js';
 
 export default {
   name: 'Setting',
+  data() {
+    return {
+    }
+  },
   computed: {
+    // type() {
+    //   return this.$store.state.show.type;
+    // },
+    index() {
+      return this.$store.state.show.index;
+    },
+    disabled() {
+      return this.index === null;
+    },
     video_list() {
       return this.$store.state.video_list;
+    },
+    video() {
+      const {video_list, index} = this;
+      return index === null ? index : video_list[index]
     },
 
   },
@@ -58,7 +84,7 @@ export default {
     cancel() {
 
     },
-    async confirm() {
+    async confirm(video) {
       const config = {
         input: {
           command: '-i',
@@ -87,9 +113,25 @@ export default {
 
 
       };
-      getVideoInfo(this.video_list[0]);
+      transformVideo(video)
       // transformVideo(this.video_list[0]);
       return;
+    },
+    confirm_batch() {
+      this.video_list.forEach(async (video) => {
+        await confirm(video);
+      })
+    },
+    export_video({after: {name, data, type}}) {
+      // 导出
+      const src = URL.createObjectURL(
+        new Blob([data], { type })
+      );
+      const el = document.createElement('a');
+      el.setAttribute('href', src);
+
+      el.setAttribute('download', name);
+      el.click();
     },
   },
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tabs v-model="selected_tab" type="card" class="content_title">
+    <el-tabs v-model="selected_tab" type="card" class="content_title" @tab-remove="removeVideo">
       <el-tab-pane label="新增视频" name="add" :closable="false"/>
       <el-tab-pane
         closable
@@ -15,7 +15,7 @@
     </div>
     <div v-else class="container">
       <div class="video_container">
-        <Video :video="video_list[selected_tab]"/>
+        <Video />
       </div>
       <div class="detail_container">
         <Detail />
@@ -46,7 +46,16 @@ export default {
       selected_tab: 'add',
     }
   },
+  watch: {
+    selected_tab(tab) {
+      this.$store.commit('setShowIndex', tab !== 'add' ? tab : null );
+    }
+  },
   methods: {
+    removeVideo(name) {
+      this.$store.dispatch('deleteVideo', name);
+      this.selected_tab === name && (this.selected_tab = 'add');
+    }
   }
 }
 </script>

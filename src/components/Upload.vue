@@ -3,7 +3,7 @@
     ref="upload"
     multiple
     drag
-    accept=".mp4,.rmvb"
+    accept=".mp4,.webm,.ogg,.ogv"
     action="https://jsonplaceholder.typicode.com/posts/"
     :limit="limit"
     :show-file-list="false"
@@ -21,6 +21,7 @@
   </el-upload>  
 </template>
 <script>
+// flv?结合flvjs？ https://blog.csdn.net/boyit0/article/details/84395347
 
 export default {
   name: 'Upload',
@@ -46,23 +47,22 @@ export default {
       reader.onload = ({target: {result}}) => {
         this.$store.dispatch('addVideo', {
           uid: raw.uid,
-          lastModified: raw.lastModified,
-          origin: {
+          name,
+          before: {
+            lastModified: raw.lastModified,
             name,
             type: raw.type,
             size: raw.size,
-            source: [],
+            data: new Uint8Array(result, 0, result.byteLength),
+            info: null,
           },
-          transform: {
+          after: {
             name: '',
             type: '',
             size: 0,
-            source: [],
+            data: undefined,
+            info: null,
           },
-          name,
-          type: raw.type,
-          size: raw.size,
-          Unit8Array: new Uint8Array(result, 0, result.byteLength)
         })
       };
       status === 'ready' && reader.readAsArrayBuffer(raw)

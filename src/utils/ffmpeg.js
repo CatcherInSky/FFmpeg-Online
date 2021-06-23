@@ -1,5 +1,6 @@
 import { createFFmpeg } from "@ffmpeg/ffmpeg";
 import $store from '../store'
+import { getVideoType, getParams } from "./other";
 export const initFFmpeg = async (
   logger = (e) => {
     $store.dispatch('addDescrption', e.message)
@@ -17,7 +18,7 @@ export const initFFmpeg = async (
   await ffmpeg.load();
   return ffmpeg;
 }
-export const getVideoInfo = async ({name, Unit8Array: data}) => {
+export const getVideoInfo = async ({name, data}) => {
   // 正则
   // 格式 编解码器 文件大小 时长 码率模式 码率 创建日期
   // 格式 尺寸 帧率模式 帧率 色彩空间 色度抽样 位深 流大小
@@ -38,7 +39,7 @@ export const getVideoInfo = async ({name, Unit8Array: data}) => {
           if(it.includes('Video')) {
             type = 'video';
           } else if(it.includes('Audio')) {
-            type = 'audio'
+            type = 'audio';
           }
           return type.length > 0 ? `${type}_${it}` : it;
         });
@@ -66,33 +67,42 @@ export const getVideoInfo = async ({name, Unit8Array: data}) => {
   });
   return info;
 }
-export const transformVideo = async ({name, Unit8Array: data}) => {
+
+
+export const transformVideo = async (video, config = {name: 'test', type: 'video/ogg'}) => {
+  const {before: {name, data}, after} = video
+
+  const {name: output_name = 'output', type: output_type = 'video/mp4', } = config;
+  const output_file_name = `${output_name + '.' + getVideoType(output_type)}`;
   console.log('getInfo', name, data)
   const ffmpeg = await initFFmpeg();
   ffmpeg.FS('writeFile', name, data);
   await ffmpeg.run(
     '-i', name,
-    '-threads', '8', '-preset', 'ultrafast', 
-    // 给流进行编码
-    "-segment_format_options", "movflags=frag_keyframe+empty_moov+default_base_moof",
-    // 编码为 5 秒钟的片段
-    "-segment_time", "5",
-    'output.webm',
-    ).then(res => {
-      console.log('run then', res);
-    });
+    ...getParams(config),
+    output_file_name,
+  ).then(res => {
+    console.log('run then', res);
+  });
 
-  const output = ffmpeg.FS('readFile', 'output.webm');
+  const output = ffmpeg.FS('readFile', output_file_name);
+  console.log('output', output);
+  after.name = output_file_name;
+  after.type = output_type;
+  after.data = output;
 
+  console.log(video)
+  return;
   const src = URL.createObjectURL(
-    new Blob([output.buffer], { type: "video/webm" })
+    new Blob([output.buffer], { type: output_type })
   );
   console.log(src);
 
   // 导出
   const el = document.createElement('a');
   el.setAttribute('href', src);
-  el.setAttribute('download', 'output.webm');
+
+  el.setAttribute('download', output_file_name);
   el.click();
   // const mediaSource = new MediaSource();
   // src = URL.createObjectURL(mediaSource);
