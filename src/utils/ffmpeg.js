@@ -69,19 +69,15 @@ export const getVideoInfo = async ({name, data}) => {
 }
 
 
-export const transformVideo = async (video, config = {name: 'test', type: 'video/ogg'}) => {
-  const {before: {name, data}, after} = video
-
-  const {name: output_name = 'output', type: output_type = 'video/mp4', } = config;
+export const transformVideo = async (video) => {
+  const {before: {name, data}, after} = video;
+  const { name: output_name = 'output', format: output_type = 'video/mp4', params }= getParams();
   const output_file_name = `${output_name + '.' + getVideoType(output_type)}`;
-  console.log('getInfo', name, data)
+  const params_list = ['-i', name, ...params, output_file_name];
+  console.log('FFmpeg 参数列表', params_list);
   const ffmpeg = await initFFmpeg();
   ffmpeg.FS('writeFile', name, data);
-  await ffmpeg.run(
-    '-i', name,
-    ...getParams(config),
-    output_file_name,
-  ).then(res => {
+  await ffmpeg.run( ...params_list ).then(res => {
     console.log('run then', res);
   });
 

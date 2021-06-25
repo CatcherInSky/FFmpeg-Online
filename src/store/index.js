@@ -37,7 +37,11 @@ export default new Vuex.Store({
       descrption_list: [],
     },
     setting: {
-      
+      name: '',
+      format: '',
+      encoder: [],
+      speed: [],
+      size: [],
     },
   },
   mutations: {

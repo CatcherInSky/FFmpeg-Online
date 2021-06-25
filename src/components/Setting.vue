@@ -4,28 +4,45 @@
       label-position="top"
     >
       <el-form-item label="格式">
-        <el-select>
-          
-        </el-select>
-      </el-form-item>
-      <el-form-item label="码率">
-        <el-select>
-
+        <el-select size="mini" v-model="form.encoder">
+          <el-option
+            v-for="{label, value} in encoder"
+            :key="label"
+            :label="label"
+            :value="value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="尺寸">
-        <el-select>
-          
+        <el-select size="mini" v-model="form.size">
+          <el-option
+            v-for="{label, value} in size"
+            :key="label"
+            :label="label"
+            :value="value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item label="加速">
-
+        <el-select size="mini" v-model="form.speed">
+          <el-option
+            v-for="{label, value} in speed"
+            :key="label"
+            :label="label"
+            :value="value"
+          />
+        </el-select>
       </el-form-item>
-      <el-form-item label="水印">
+      <!-- <el-form-item label="码率">
+        <el-select>
 
-      </el-form-item>
+        </el-select>
+      </el-form-item> -->
+      <!-- <el-form-item label="水印">
+
+      </el-form-item> -->
       <el-form-item label="重命名">
-
+        <el-input size="mini" placeholder="默认为output" v-model="form.name" />
       </el-form-item>
 
     </el-form>
@@ -49,19 +66,23 @@
 </template>
 <script>
 
-import { getParams } from '../utils/other.js';
 import { transformVideo } from '../utils/ffmpeg.js';
+import { options, map } from '../constant/constant.js';
 
 export default {
   name: 'Setting',
   data() {
     return {
+      ...options, ...map,
+      form: {
+        encoder: '',
+        size: '',
+        speed: '',
+        name: '',
+      },
     }
   },
   computed: {
-    // type() {
-    //   return this.$store.state.show.type;
-    // },
     index() {
       return this.$store.state.show.index;
     },
@@ -73,48 +94,28 @@ export default {
     },
     video() {
       const {video_list, index} = this;
-      return index === null ? index : video_list[index]
+      return index === null ? index : video_list[index];
     },
-
   },
-  mounted() {
-    getParams()
+  watch: {
+    form: {
+      deep: true,
+      handler({encoder, size, speed, name}) {
+        this.$store.commit('setSetting', {
+          encoder: encoder && encoder.split(' '),
+          size: size && size.split(' '),
+          speed: speed && speed.split(' '),
+          name,
+          format: encoder && this.format.get(encoder)
+        })
+      }
+    }
   },
   methods: {
     cancel() {
-
     },
     async confirm(video) {
-      const config = {
-        input: {
-          command: '-i',
-          name: this.video_list[0].name,
-          format: 'mp4',
-        },
-        output: {
-          name: 'output',
-          format: 'webm',
-        },
-        // 多线程
-        multithreading: {
-          command: '-threads',
-          value: '5',
-        },
-        // 编码效率
-        preset: {
-          command: '-preset',
-          value: 'ultrafast',
-        },
-        // 尺寸
-        size: {
-          command: '-s',
-          value: '1920x1080'
-        }
-
-
-      };
       transformVideo(video)
-      // transformVideo(this.video_list[0]);
       return;
     },
     confirm_batch() {
