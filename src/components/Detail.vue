@@ -37,8 +37,9 @@ export default {
       return video_list[index][type]
     },
     detail() {
-      const { video } = this;
-      return JSON.stringify(video.info);
+      const { video: {info} } = this;
+      const str = info ? Object.keys(info).map(it =>  `${it}: ${info[it]}`) : ['']
+      return str.join('\r\n');
     },
   },
   watch: {
@@ -46,11 +47,20 @@ export default {
       immediate: true,
       handler: async function() {
         const { video } = this;
-        const { data, info } = video;
+        const { data, info, type, name } = video;
         if(data && !info) {
           this.loading = true;
-          console.log('读取视频信息', video);
-          video.info = await getVideoInfo(video);
+          // video.info = await getVideoInfo(video);
+          window.$ffprobe.onmessage = (e) => {
+            console.log('ffprobe', e.data)
+          }
+          setTimeout(() => {
+
+            window.$ffprobe.postMessage([
+              'get_file_info', 
+              new File(data, name, { type })
+            ])
+          }, 1000)
           this.loading = false;
         }
       }
@@ -78,6 +88,8 @@ export default {
 }
 .info {
   overflow-wrap: break-word;
+  white-space: pre-line;
+  text-align: left;
 }
 
 </style>

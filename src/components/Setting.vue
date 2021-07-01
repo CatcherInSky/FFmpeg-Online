@@ -42,7 +42,7 @@
 
       </el-form-item> -->
       <el-form-item label="重命名">
-        <el-input size="mini" placeholder="默认为output" v-model="form.name" />
+        <el-input size="mini" placeholder="默认为output" v-model="form.name" style="width: 194px"/>
       </el-form-item>
 
     </el-form>

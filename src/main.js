@@ -10,6 +10,8 @@ import video_zhCN from 'video.js/dist/lang/zh-CN.json'
 import video_en from  'video.js/dist/lang/en.json'
 import 'video.js/dist/video-js.css'
 import '@ffmpeg/ffmpeg/dist/ffmpeg.min.js'
+// import ffprobe from './wasm/ffprobe/index.js'
+// console.log(ffprobe)
 
 
 
@@ -18,6 +20,14 @@ Video.addLanguage('en', video_en);
 Vue.prototype.$video = Video
 Vue.config.productionTip = false
 Vue.use(ElementUI);
+
+// const ffprobe = new Ffprobe();
+// console.log('ffprobe', ffprobe)
+// ffprobe.onmessage = function(e) {
+//   console.log('onmessage', e.data)
+// }
+// ffprobe.postMessage(['1', '1'])
+// Vue.prototype.$ffprobe = ffprobe;
 
 /* eslint-disable no-new */
 new Vue({
